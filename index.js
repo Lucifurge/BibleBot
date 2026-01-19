@@ -9,9 +9,9 @@ const app = express();
 // ======================
 // CONFIG
 // ======================
-const CLIENT_ID = "1460964137956933747"; // your client ID
+const CLIENT_ID = "1462950402088632480"; // your Discord client ID
 const CLIENT_SECRET = "kgJTJWt45khYI7bIXjNIvVY_IxHx3MBe"; // your secret
-const REDIRECT_URI = "https://biblebots-1shb.onrender.com/callback"; // your render URL
+const REDIRECT_URI = "https://biblebots-1shb.onrender.com/callback";
 const PORT = process.env.PORT || 3000;
 
 // ======================
@@ -46,16 +46,18 @@ app.get("/callback", async (req, res) => {
 
   try {
     // Exchange code for token
-    const tokenResponse = await axios.post("https://discord.com/api/oauth2/token", new URLSearchParams({
-      client_id: CLIENT_ID,
-      client_secret: CLIENT_SECRET,
-      grant_type: "authorization_code",
-      code,
-      redirect_uri: REDIRECT_URI,
-      scope: "identify guilds"
-    }).toString(), {
-      headers: { "Content-Type": "application/x-www-form-urlencoded" }
-    });
+    const tokenResponse = await axios.post(
+      "https://discord.com/api/oauth2/token",
+      new URLSearchParams({
+        client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET,
+        grant_type: "authorization_code",
+        code,
+        redirect_uri: REDIRECT_URI,
+        scope: "identify guilds"
+      }).toString(),
+      { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+    );
 
     const accessToken = tokenResponse.data.access_token;
 
@@ -72,7 +74,7 @@ app.get("/callback", async (req, res) => {
     req.session.user = userResponse.data;
     req.session.guilds = guildsResponse.data;
 
-    // Redirect to homepage (you can now show bot links)
+    // Redirect to dashboard
     res.redirect("/dashboard");
 
   } catch (err) {
@@ -81,11 +83,10 @@ app.get("/callback", async (req, res) => {
   }
 });
 
-// Dashboard page after login
+// Dashboard page
 app.get("/dashboard", (req, res) => {
   if (!req.session.user) return res.redirect("/");
 
-  // You can render a HTML here or just JSON
   res.send(`
     <h1>Welcome, ${req.session.user.username}</h1>
     <p>Your servers:</p>
@@ -94,6 +95,12 @@ app.get("/dashboard", (req, res) => {
     </ul>
     <p><a href="/">Go back</a></p>
   `);
+});
+
+// Session route for index.html
+app.get("/session", (req, res) => {
+  if (!req.session.user) return res.json({ loggedIn: false });
+  res.json({ loggedIn: true, user: req.session.user });
 });
 
 // Logout
