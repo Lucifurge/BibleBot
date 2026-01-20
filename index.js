@@ -3,26 +3,29 @@ const express = require("express");
 const axios = require("axios");
 const path = require("path");
 const session = require("express-session");
+const qs = require("qs"); // safer URL encoding
 
 const app = express();
 
 // ======================
 // CONFIG
 // ======================
-const CLIENT_ID = process.env.CLIENT_ID;         // set in Render env
-const CLIENT_SECRET = process.env.CLIENT_SECRET; // set in Render env
-const REDIRECT_URI = process.env.REDIRECT_URI || "https://biblebot-guon.onrender.com/callback"; // updated domain
+const CLIENT_ID = process.env.CLIENT_ID;
+const CLIENT_SECRET = process.env.CLIENT_SECRET;
+const REDIRECT_URI = process.env.REDIRECT_URI || "https://biblebot-guon.onrender.com/callback";
 const PORT = process.env.PORT || 3000;
 
 // ======================
 // EXPRESS SETUP
 // ======================
-app.use(express.static(path.join(__dirname, "public"))); // serve files from public folder
-app.use(session({
-  secret: "discord_oauth_secret_key",
-  resave: false,
-  saveUninitialized: false
-}));
+app.use(express.static(path.join(__dirname, "public")));
+app.use(
+  session({
+    secret: "discord_oauth_secret_key",
+    resave: false,
+    saveUninitialized: false
+  })
+);
 
 // ======================
 // ROUTES
@@ -35,7 +38,9 @@ app.get("/", (req, res) => {
 
 // Discord login redirect
 app.get("/login", (req, res) => {
-  const oauthUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=gdm.join`;
+  const oauthUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(
+    REDIRECT_URI
+  )}&response_type=code&scope=gdm.join`;
   res.redirect(oauthUrl);
 });
 
@@ -44,43 +49,42 @@ app.get("/callback", async (req, res) => {
   const code = req.query.code;
   if (!code) return res.send("No code provided");
 
+  console.log("Received code:", code); // Debug
+
   try {
-    // Exchange code for access token (remove scope here!)
+    // Exchange code for access token
     const tokenResponse = await axios.post(
       "https://discord.com/api/oauth2/token",
-      new URLSearchParams({
+      qs.stringify({
         client_id: CLIENT_ID,
         client_secret: CLIENT_SECRET,
         grant_type: "authorization_code",
         code,
         redirect_uri: REDIRECT_URI
-      }).toString(),
+      }),
       { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
     );
 
     const accessToken = tokenResponse.data.access_token;
+    console.log("Access token received:", !!accessToken);
 
     // Get user info
     const userResponse = await axios.get("https://discord.com/api/users/@me", {
       headers: { Authorization: `Bearer ${accessToken}` }
     });
 
-    // Save user to session
     req.session.user = userResponse.data;
 
-    // Redirect to dashboard
     res.redirect("/dashboard");
-
   } catch (err) {
     console.error("Discord OAuth error:", err.response?.data || err.message);
-    res.send("Error during Discord login");
+    res.send("Error during Discord login. Check console logs.");
   }
 });
 
 // Dashboard
 app.get("/dashboard", (req, res) => {
   if (!req.session.user) return res.redirect("/");
-
   res.send(`
     <h1>Welcome, ${req.session.user.username}</h1>
     <p>You are logged in! Now you can manage or invite your bots.</p>
@@ -94,7 +98,7 @@ app.get("/logout", (req, res) => {
   res.redirect("/");
 });
 
-// Endpoint for front-end to check session
+// Front-end session check
 app.get("/session", (req, res) => {
   if (!req.session.user) return res.json({ loggedIn: false });
   res.json({ loggedIn: true, user: req.session.user });
