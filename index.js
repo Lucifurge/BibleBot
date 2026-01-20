@@ -18,12 +18,13 @@ const PORT = process.env.PORT || 3000;
 // ======================
 // EXPRESS SETUP
 // ======================
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public"))); // serve public folder
 app.use(
   session({
     secret: "discord_oauth_secret_key",
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    cookie: { secure: false } // true if using HTTPS
   })
 );
 
@@ -40,7 +41,7 @@ app.get("/", (req, res) => {
 app.get("/login", (req, res) => {
   const oauthUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(
     REDIRECT_URI
-  )}&response_type=code&scope=gdm.join`;
+  )}&response_type=code&scope=gdm.join%20identify`;
   res.redirect(oauthUrl);
 });
 
@@ -49,7 +50,7 @@ app.get("/callback", async (req, res) => {
   const code = req.query.code;
   if (!code) return res.send("No code provided");
 
-  console.log("Received code:", code); // Debug
+  console.log("Received code:", code);
 
   try {
     // Exchange code for access token
@@ -73,8 +74,10 @@ app.get("/callback", async (req, res) => {
       headers: { Authorization: `Bearer ${accessToken}` }
     });
 
+    // Save user to session
     req.session.user = userResponse.data;
 
+    // Redirect to dashboard
     res.redirect("/dashboard");
   } catch (err) {
     console.error("Discord OAuth error:", err.response?.data || err.message);
