@@ -9,15 +9,15 @@ const app = express();
 // ======================
 // CONFIG
 // ======================
-const CLIENT_ID = process.env.CLIENT_ID;        // set in Render env
+const CLIENT_ID = process.env.CLIENT_ID;         // set in Render env
 const CLIENT_SECRET = process.env.CLIENT_SECRET; // set in Render env
-const REDIRECT_URI = "https://biblebot-guon.onrender.com/callback"; // updated domain
+const REDIRECT_URI = process.env.REDIRECT_URI || "https://biblebot-guon.onrender.com/callback"; // updated domain
 const PORT = process.env.PORT || 3000;
 
 // ======================
 // EXPRESS SETUP
 // ======================
-app.use(express.static(path.join(__dirname, "public"))); // serve files from public
+app.use(express.static(path.join(__dirname, "public"))); // serve files from public folder
 app.use(session({
   secret: "discord_oauth_secret_key",
   resave: false,
@@ -45,15 +45,15 @@ app.get("/callback", async (req, res) => {
   if (!code) return res.send("No code provided");
 
   try {
-    // Exchange code for access token
-    const tokenResponse = await axios.post("https://discord.com/api/oauth2/token",
+    // Exchange code for access token (remove scope here!)
+    const tokenResponse = await axios.post(
+      "https://discord.com/api/oauth2/token",
       new URLSearchParams({
         client_id: CLIENT_ID,
         client_secret: CLIENT_SECRET,
         grant_type: "authorization_code",
         code,
-        redirect_uri: REDIRECT_URI,
-        scope: "gdm.join"
+        redirect_uri: REDIRECT_URI
       }).toString(),
       { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
     );
@@ -68,11 +68,11 @@ app.get("/callback", async (req, res) => {
     // Save user to session
     req.session.user = userResponse.data;
 
-    // Redirect to dashboard page
+    // Redirect to dashboard
     res.redirect("/dashboard");
 
   } catch (err) {
-    console.error(err);
+    console.error("Discord OAuth error:", err.response?.data || err.message);
     res.send("Error during Discord login");
   }
 });
