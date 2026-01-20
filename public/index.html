@@ -89,12 +89,30 @@ nav ul li a:hover { color:var(--dark); }
 .dev-card img:hover { transform:translateY(-8px) scale(1.08); }
 .dev-card h4 { color:var(--gold); font-size:1.4rem; margin-bottom:0.5rem; }
 .dev-card p { font-size:0.95rem; opacity:0.85; }
+  .dev-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+.dev-card img {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;       /* Crop image and focus on center */
+  object-position: center;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 0 20px rgba(245,197,66,0.6));
+  transition: 0.3s;
+}
+.dev-card img:hover { transform: translateY(-8px) scale(1.08); }
+.dev-card h4 { color: var(--green); margin-bottom: 0.5rem; font-size: 1.4rem; }
+.dev-card p { font-size: 0.95rem; opacity: 0.85; margin-bottom: 1rem; }
+.dev-card .invite-btn { padding:0.7rem 1.5rem; border-radius:30px; font-weight:bold; border:2px solid var(--gold); color:var(--gold); transition:0.3s; }
+.dev-card .invite-btn:hover { background: var(--gold); color: var(--dark); box-shadow: 0 0 15px rgba(245,197,66,0.6); }
+
 
 .login-btn-container { display:flex; justify-content:center; margin-bottom:2rem; }
 .login-btn { padding:0.8rem 2rem; background:#7289da; color:white; border-radius:30px; font-weight:bold; text-decoration:none; display:inline-block; transition:0.3s; }
 .login-btn:hover { background:#5b6eae; transform:translateY(-2px); }
 
 footer { text-align:center; padding:2rem; color:rgba(255,255,255,0.7); border-top:1px solid rgba(245,197,66,0.2); margin-top:4rem; }
+  
 
 /* Responsive */
 @media(max-width:768px){
@@ -167,23 +185,37 @@ footer { text-align:center; padding:2rem; color:rgba(255,255,255,0.7); border-to
   </div>
 </section>
 
-<section class="section">
+<section class="section" id="devs">
   <h3>Meet the Developers</h3>
-  <div class="dev-cards">
-    <div class="dev-card">
+  <div class="cards dev-cards">
+    <!-- Dev Luke -->
+    <div class="card dev-card">
       <img src="luke.png" alt="Dev Luke">
       <h4>Dev Luke</h4>
       <p>Lead developer, bot architect, and script specialist. Passionate about spreading the Word.</p>
+      <div class="card-buttons">
+        <a href="https://discord.com/users/LukeDiscordID" class="invite-btn" target="_blank">Discord</a>
+      </div>
     </div>
-    <div class="dev-card">
+
+    <!-- Dev Aether -->
+    <div class="card dev-card">
       <img src="aether.png" alt="Dev Aether">
       <h4>Dev Aether</h4>
       <p>Co-developer, UI/UX designer, and creative lead. Brings life and style to every bot.</p>
+      <div class="card-buttons">
+        <a href="https://discord.com/users/AetherDiscordID" class="invite-btn" target="_blank">Discord</a>
+      </div>
     </div>
-    <div class="dev-card">
+
+    <!-- Dev Zap -->
+    <div class="card dev-card">
       <img src="zap.png" alt="Dev Zap">
       <h4>Dev Zap</h4>
       <p>Co-developer, automation expert, and optimization guru. Ensures bots run smoothly.</p>
+      <div class="card-buttons">
+        <a href="https://discord.com/users/ZapDiscordID" class="invite-btn" target="_blank">Discord</a>
+      </div>
     </div>
   </div>
 </section>
