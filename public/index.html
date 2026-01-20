@@ -38,20 +38,13 @@ nav ul { list-style:none; display:flex; gap:2rem; }
 nav ul li a { color:var(--white); text-decoration:none; font-weight:600; transition:0.3s; }
 nav ul li a:hover { color:var(--dark); }
 
-/* Logo slideshow container */
+/* Logo slideshow */
 .logo-slideshow { display:flex; justify-content:center; align-items:center; gap:2rem; margin:2rem 0; height:100px; position:relative; }
 .logo-slideshow img { width:100px; height:100px; object-fit:contain; position:absolute; opacity:0; animation: slideShow 9s infinite; }
 .logo-slideshow img:nth-child(1) { animation-delay:0s; }
 .logo-slideshow img:nth-child(2) { animation-delay:3s; }
 .logo-slideshow img:nth-child(3) { animation-delay:6s; }
-
-@keyframes slideShow {
-  0% { opacity:0; transform: scale(0.8); }
-  10% { opacity:1; transform: scale(1); }
-  30% { opacity:1; transform: scale(1); }
-  40% { opacity:0; transform: scale(0.8); }
-  100% { opacity:0; }
-}
+@keyframes slideShow { 0% { opacity:0; transform: scale(0.8); } 10% { opacity:1; transform: scale(1); } 30% { opacity:1; transform: scale(1); } 40% { opacity:0; transform: scale(0.8); } 100% { opacity:0; } }
 
 /* Hero Section */
 .hero { position: relative; z-index: 1; text-align:center; padding:5rem 2rem; background: linear-gradient(180deg, rgba(29,185,84,0.85), rgba(245,197,66,0.85)), url('https://images.unsplash.com/photo-1601924582975-8ef3b5f5b469?auto=format&fit=crop&w=1950&q=80') center/cover no-repeat; }
@@ -78,10 +71,11 @@ nav ul li a:hover { color:var(--dark); }
 .card h4 { color:var(--green); font-size:1.5rem; margin-bottom:1rem; }
 .card-buttons { display:flex; justify-content:center; gap:1rem; flex-wrap:wrap; }
 
-.visit-btn, .invite-btn { padding:0.8rem 1.5rem; border-radius:30px; font-weight:bold; text-decoration:none; }
+.visit-btn, .invite-btn { padding:0.8rem 1.5rem; border-radius:30px; font-weight:bold; text-decoration:none; opacity:0.5; pointer-events:none; }
 .visit-btn { background:linear-gradient(135deg,var(--green),var(--gold)); color:var(--dark); }
 .invite-btn { border:2px solid var(--gold); color:var(--gold); transition:0.3s; }
-.invite-btn:hover { background:var(--gold); color:var(--dark); box-shadow:0 0 15px rgba(245,197,66,0.6); }
+.visit-btn.enabled, .invite-btn.enabled { opacity:1; pointer-events:auto; }
+.invite-btn.enabled:hover { background:var(--gold); color:var(--dark); box-shadow:0 0 15px rgba(245,197,66,0.6); }
 
 .login-btn-container { display:flex; justify-content:center; margin-bottom:2rem; }
 .login-btn { padding:0.8rem 2rem; background:#7289da; color:white; border-radius:30px; font-weight:bold; text-decoration:none; display:inline-block; }
@@ -135,8 +129,8 @@ footer { text-align:center; padding:2rem; color:rgba(255,255,255,0.7); border-to
       <h4>Bible Engine Bot</h4>
       <p>Daily verses, memes, scripture commands, and faith-based engagement.</p>
       <div class="card-buttons">
-        <a href="https://deddsbot.onrender.com/" class="visit-btn" target="_blank">Visit Bot</a>
-        <a href="https://discord.com/oauth2/authorize?client_id=1460782091116482602&permissions=8&scope=bot" class="invite-btn" target="_blank">Invite Bot</a>
+        <a href="https://deddsbot.onrender.com/" class="visit-btn enabled" target="_blank">Visit Bot</a>
+        <a href="#" class="invite-btn" id="engineInvite">Invite Bot</a>
       </div>
     </div>
 
@@ -145,8 +139,8 @@ footer { text-align:center; padding:2rem; color:rgba(255,255,255,0.7); border-to
       <h4>Bible Helper Bot</h4>
       <p>Automated welcomes, announcements, moderation & Christian utility tools.</p>
       <div class="card-buttons">
-        <a href="https://deddshelperbot.onrender.com/" class="visit-btn" target="_blank">Visit Bot</a>
-        <a href="https://discord.com/oauth2/authorize?client_id=1460964137956933747&permissions=8&scope=bot" class="invite-btn" target="_blank">Invite Bot</a>
+        <a href="https://deddshelperbot.onrender.com/" class="visit-btn enabled" target="_blank">Visit Bot</a>
+        <a href="#" class="invite-btn" id="helperInvite">Invite Bot</a>
       </div>
     </div>
   </div>
@@ -171,6 +165,28 @@ async function checkStatus(url, id){
 
 checkStatus("https://deddsbot.onrender.com/", "engineStatus");
 checkStatus("https://deddshelperbot.onrender.com/", "helperStatus");
+
+// Enable invite buttons after login
+async function enableInviteButtons() {
+  try {
+    const res = await fetch("/session");
+    const data = await res.json();
+    if (data.loggedIn) {
+      document.getElementById("engineInvite").href = "https://discord.com/oauth2/authorize?client_id=1460782091116482602&permissions=8&scope=bot";
+      document.getElementById("engineInvite").classList.add("enabled");
+
+      document.getElementById("helperInvite").href = "https://discord.com/oauth2/authorize?client_id=1460964137956933747&permissions=8&scope=bot";
+      document.getElementById("helperInvite").classList.add("enabled");
+
+      document.getElementById("loginBtn").textContent = `Logged in as ${data.user.username}`;
+      document.getElementById("loginBtn").href = "/dashboard";
+    }
+  } catch(err) {
+    console.error("Failed to fetch session:", err);
+  }
+}
+
+enableInviteButtons();
 </script>
 
 </body>
