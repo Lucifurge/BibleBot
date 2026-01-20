@@ -18,6 +18,7 @@
 * { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:'Montserrat', sans-serif; background: linear-gradient(180deg, #08140d, #0b1a12); color: var(--white); line-height:1.6; position: relative; overflow-x: hidden; }
 
+/* Background floating logo */
 body::before {
   content: "";
   position: fixed; inset: 0;
@@ -27,9 +28,9 @@ body::before {
   pointer-events: none;
   z-index: 0;
 }
-
 @keyframes floatLogo { 0% { transform: translateY(0) scale(1); } 50% { transform: translateY(-20px) scale(1.03); } 100% { transform: translateY(0) scale(1); } }
 
+/* NAVBAR */
 nav { display:flex; justify-content:space-between; align-items:center; padding:1rem 3rem; background:linear-gradient(90deg,var(--green),var(--gold)); box-shadow:0 4px 8px rgba(0,0,0,0.3); position:sticky; top:0; z-index:100; }
 .nav-left { display:flex; align-items:center; gap:0.8rem; }
 .logo { width:42px; height:42px; border-radius:50%; box-shadow:0 0 12px rgba(245,197,66,0.7); }
@@ -53,38 +54,43 @@ nav ul li a:hover { color:var(--dark); }
 .hero a.button { padding:1rem 2rem; background:var(--white); color:var(--dark); font-weight:700; border-radius:30px; text-decoration:none; transition:0.3s; box-shadow:0 8px 15px rgba(0,0,0,0.3); }
 .hero a.button:hover { background:var(--gold); transform:translateY(-3px); }
 
+/* Section containers */
 .section { position: relative; z-index: 1; padding:4rem 2rem; max-width:1200px; margin:auto; }
 .section h3 { text-align:center; font-size:2rem; margin-bottom:2rem; color:var(--gold); }
 
+/* Status display */
 .status { display:flex; justify-content:center; gap:2rem; margin-bottom:2rem; flex-wrap:wrap; }
 .status div { padding:1rem 2rem; border-radius:15px; background:var(--card); font-weight:bold; min-width:220px; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.4); }
 .online { border:2px solid var(--green); color:var(--green); }
 .offline { border:2px solid #ff5555; color:#ff5555; }
 
-.cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:2rem; }
+/* Cards for bots & devs */
+.cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:2rem; }
 .card { background:var(--card); padding:2rem; border-radius:20px; text-align:center; box-shadow:0 6px 20px rgba(0,0,0,0.5); border:1px solid rgba(245,197,66,0.2); transition:0.3s; }
 .card:hover { transform:translateY(-6px); box-shadow:0 14px 28px rgba(0,0,0,0.6); }
+.card img { width:120px; height:120px; border-radius:50%; margin-bottom:1rem; object-fit:cover; transition:0.3s; filter:drop-shadow(0 0 15px rgba(245,197,66,0.5)); }
+.card img:hover { transform:translateY(-6px) scale(1.05); }
 
-.bot-logo { width:90px; height:90px; margin-bottom:1rem; filter:drop-shadow(0 0 15px rgba(245,197,66,0.5)); transition:0.3s; }
-.bot-logo:hover { transform:translateY(-6px) scale(1.05); }
+.card h4 { color:var(--green); font-size:1.5rem; margin-bottom:0.5rem; }
+.card p { font-size:0.95rem; opacity:0.85; }
 
-.card h4 { color:var(--green); font-size:1.5rem; margin-bottom:1rem; }
+/* Buttons */
 .card-buttons { display:flex; justify-content:center; gap:1rem; flex-wrap:wrap; }
-
 .visit-btn, .invite-btn { padding:0.8rem 1.5rem; border-radius:30px; font-weight:bold; text-decoration:none; opacity:0.5; pointer-events:none; }
 .visit-btn { background:linear-gradient(135deg,var(--green),var(--gold)); color:var(--dark); }
 .invite-btn { border:2px solid var(--gold); color:var(--gold); transition:0.3s; }
 .visit-btn.enabled, .invite-btn.enabled { opacity:1; pointer-events:auto; }
 .invite-btn.enabled:hover { background:var(--gold); color:var(--dark); box-shadow:0 0 15px rgba(245,197,66,0.6); }
 
-.login-btn-container { display:flex; justify-content:center; margin-bottom:2rem; }
-.login-btn { padding:0.8rem 2rem; background:#7289da; color:white; border-radius:30px; font-weight:bold; text-decoration:none; display:inline-block; }
-
-footer { text-align:center; padding:2rem; color:rgba(255,255,255,0.7); border-top:1px solid rgba(245,197,66,0.2); margin-top:4rem; position: relative; z-index: 1; }
-
-@media(max-width:768px){ .hero h2{font-size:2.2rem;} .hero p{font-size:1.1rem;} }
+/* Developer cards */
+.dev-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:2rem; margin-top:4rem; }
+.dev-card img { width:120px; height:120px; border-radius:50%; margin-bottom:1rem; object-fit:cover; filter:drop-shadow(0 0 15px rgba(245,197,66,0.5)); transition:0.3s; }
+.dev-card img:hover { transform:translateY(-6px) scale(1.05); }
+.dev-card h4 { color:var(--gold); margin-bottom:0.5rem; }
+.dev-card p { font-size:0.95rem; opacity:0.85; }
 </style>
 </head>
+
 <body>
 
 <nav>
@@ -142,6 +148,27 @@ footer { text-align:center; padding:2rem; color:rgba(255,255,255,0.7); border-to
         <a href="https://deddshelperbot.onrender.com/" class="visit-btn enabled" target="_blank">Visit Bot</a>
         <a href="#" class="invite-btn" id="helperInvite">Invite Bot</a>
       </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <h3>Meet the Developers</h3>
+  <div class="dev-cards">
+    <div class="card dev-card">
+      <img src="luke.png" alt="Dev Luke">
+      <h4>Dev Luke</h4>
+      <p>Lead developer, bot architect, and script specialist. Passionate about spreading the Word.</p>
+    </div>
+    <div class="card dev-card">
+      <img src="aether.png" alt="Dev Aether">
+      <h4>Dev Aether</h4>
+      <p>Co-developer, UI/UX designer, and creative lead. Brings life and style to every bot.</p>
+    </div>
+    <div class="card dev-card">
+      <img src="zap.png" alt="Dev Zap">
+      <h4>Dev Zap</h4>
+      <p>Co-developer, automation expert, and optimization guru. Ensures bots run smoothly.</p>
     </div>
   </div>
 </section>
