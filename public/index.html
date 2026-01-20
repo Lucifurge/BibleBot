@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bible Helper Bot Dashboard</title>
+  <link rel="icon" type="image/x-icon" href="logo.ico">
+  <style>
+    /* General Styles */
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: #0a0a0a;
+      color: #fff;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* Navbar */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(90deg, #00ff99, #ffd700);
+      padding: 1rem 2rem;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
+
+    nav h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      color: #000;
+      font-weight: bold;
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    nav ul li {
+      margin-left: 2rem;
+    }
+
+    nav ul li a {
+      font-weight: bold;
+      color: #000;
+      transition: 0.3s;
+    }
+
+    nav ul li a:hover {
+      color: #fff;
+    }
+
+    /* Main Dashboard */
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .card {
+      background: linear-gradient(145deg, #111, #222);
+      border: 1px solid #00ff99;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 8px 20px rgba(0,255,153,0.3);
+      transition: transform 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card h3 {
+      margin-top: 0;
+      margin-bottom: 1rem;
+      color: #ffd700;
+    }
+
+    .status {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .online {
+      color: #00ff99;
+      font-weight: bold;
+    }
+
+    .offline {
+      color: #ff5555;
+      font-weight: bold;
+    }
+
+    .commands-list {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .commands-list div {
+      flex: 1 1 200px;
+      margin: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: #111;
+      border-left: 4px solid #00ff99;
+      border-radius: 8px;
+    }
+
+    .footer {
+      text-align: center;
+      margin: 3rem 0 1rem;
+      font-size: 0.9rem;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <h1>Bible Helper Bot</h1>
+    <ul>
+      <li><a href="https://biblebots-1shb.onrender.com/#bots">Home</a></li>
+      <li><a href="https://deddsbot.onrender.com/" target="_blank">Bible Engine Bot</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <!-- Bot Status Card -->
+    <div class="card">
+      <h3>Bot Status</h3>
+      <div id="status" class="status">Checking status...</div>
+      <div id="servers" class="status">Servers: ...</div>
+    </div>
+
+    <!-- Commands Card -->
+    <div class="card">
+      <h3>Slash Commands</h3>
+      <div class="commands-list">
+        <div>/ping - Check bot status</div>
+        <div>/setwelcome - Set welcome message</div>
+        <div>/setgoodbye - Set goodbye message</div>
+        <div>/announce - Send an announcement embed</div>
+      </div>
+    </div>
+
+    <!-- About Devs -->
+    <div class="card">
+      <h3>About the Developers</h3>
+      <p>This bot was created to spread the Bible and God’s Word using Discord. <br>
+      Developed by <strong>Dev Luke</strong>, <strong>Dev Zap</strong>, and <strong>Lead Dev Aether</strong>, the founders of the Bible Bots initiative.</p>
+    </div>
+  </div>
+
+  <div class="footer">© 2026 Bible Bots</div>
+
+  <script>
+    async function fetchStatus() {
+      try {
+        const res = await fetch("https://deddshelperbot.onrender.com/api/status");
+        if (!res.ok) throw new Error("Offline");
+        const data = await res.json();
+        document.getElementById("status").innerHTML = data.online
+          ? '<span class="online">ONLINE</span>'
+          : '<span class="offline">OFFLINE</span>';
+        document.getElementById("servers").innerHTML = "Servers: " + (data.servers || 0);
+      } catch {
+        document.getElementById("status").innerHTML = '<span class="offline">OFFLINE</span>';
+        document.getElementById("servers").innerHTML = "Servers: 0";
+      }
+    }
+
+    fetchStatus();
+    setInterval(fetchStatus, 15000);
+  </script>
+</body>
+</html>
